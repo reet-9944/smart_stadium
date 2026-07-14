@@ -39,13 +39,13 @@ const Dashboard = ({ onBack }) => {
     if (apiKey) {
       // Real GenAI API Call (Gemini)
       try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ 
               parts: [{ 
-                text: `You are a Smart Stadium GenAI Assistant for the FIFA World Cup 2026. You help fans with navigation, food, crowd avoidance, and translation. You have access to real-time mock data: East Gate is crowded, West Gate is clear, hotdogs are at Section 102. Keep responses concise (1-3 sentences), friendly, and in the language the user requests. User asks: "${userMsg}"` 
+                text: `You are a Smart Stadium GenAI Assistant for the FIFA World Cup 2026. You help fans with navigation, food, crowd avoidance, and translation. You have access to real-time mock data: East Gate is crowded, West Gate is clear, hotdogs are at Section 102, restrooms at Section 104. Keep responses concise (1-3 sentences), friendly, and in the language the user requests. User asks: "${userMsg}"` 
               }] 
             }]
           })
@@ -55,7 +55,25 @@ const Dashboard = ({ onBack }) => {
         setIsTyping(false);
         
         if (data.error) {
-           setMessages(prev => [...prev, { role: 'ai', content: `API Error: ${data.error.message}. Please check your API key.` }]);
+           // Fallback to gemini-pro if 1.5-flash is restricted for their key
+           if (data.error.message.includes('not found')) {
+             const fallbackResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: `You are a Smart Stadium GenAI Assistant. Keep responses concise. User asks: "${userMsg}"` }] }]
+                })
+             });
+             const fallbackData = await fallbackResponse.json();
+             if (fallbackData.error) {
+                setMessages(prev => [...prev, { role: 'ai', content: `API Error: ${fallbackData.error.message}.` }]);
+             } else {
+                const text = fallbackData.candidates[0].content.parts[0].text;
+                setMessages(prev => [...prev, { role: 'ai', content: text }]);
+             }
+           } else {
+             setMessages(prev => [...prev, { role: 'ai', content: `API Error: ${data.error.message}. Please check your API key.` }]);
+           }
         } else {
            const text = data.candidates[0].content.parts[0].text;
            setMessages(prev => [...prev, { role: 'ai', content: text }]);

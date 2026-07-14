@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Menu, Activity } from 'lucide-react';
+import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Activity, Settings, Key } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('fan'); // 'fan' | 'staff'
   const [messages, setMessages] = useState([
-    { role: 'ai', content: 'Hello! I am your Smart Stadium GenAI Assistant. How can I help you today? (Try asking about food, seats, or language assistance)' }
+    { role: 'ai', content: 'Hello! I am your Smart Stadium GenAI Assistant. I can help you with navigation, food, and translation in real-time.' }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [showSettings, setShowSettings] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -16,42 +19,79 @@ const Dashboard = ({ onBack }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
-  const handleSend = (e) => {
+  const handleSaveKey = (e) => {
+    const key = e.target.value;
+    setApiKey(key);
+    localStorage.setItem('gemini_api_key', key);
+  };
+
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
     const userMsg = inputValue;
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setInputValue('');
+    setIsTyping(true);
 
-    // Mock GenAI response based on keywords
-    setTimeout(() => {
-      let aiResponse = "I'm processing your request. Please hold on.";
-      const lowerInput = userMsg.toLowerCase();
-      
-      if (lowerInput.includes('food') || lowerInput.includes('hungry') || lowerInput.includes('eat') || lowerInput.includes('khana')) {
-        aiResponse = lowerInput.includes('hindi') || lowerInput.includes('khana') ? 
-          "सेक्शन 102 में 2 मिनट की दूरी पर एक फूड स्टैंड है। अभी वहां भीड़ कम है। क्या मैं आपको वहां जाने का रास्ता बताऊं?" : 
-          "There is a food stand 2 minutes away at Section 102. Current wait time is under 5 minutes. Would you like me to guide you there?";
-      } else if (lowerInput.includes('seat') || lowerInput.includes('where is')) {
-        aiResponse = "To get to your seat, please take the nearest escalator to Level 2. Your route is currently clear of heavy crowds.";
-      } else if (lowerInput.includes('spanish') || lowerInput.includes('hola') || lowerInput.includes('español')) {
-        aiResponse = "¡Hola! Soy tu asistente inteligente del estadio. ¿En qué puedo ayudarte hoy? (Puedes preguntarme sobre comida, asientos o direcciones).";
-      } else if (lowerInput.includes('hindi') || lowerInput.includes('namaste')) {
-        aiResponse = "नमस्ते! मैं आपका स्मार्ट स्टेडियम सहायक हूँ। कृपया मुझे बताएं कि आप क्या खोज रहे हैं (जैसे: खाना, बाथरूम, या अपनी सीट), और मैं आपको हिंदी में पूरी जानकारी दूंगा।";
-      } else if (lowerInput.includes('french') || lowerInput.includes('bonjour')) {
-        aiResponse = "Bonjour ! Je suis votre assistant de stade intelligent. Comment puis-je vous aider aujourd'hui ?";
-      } else if (lowerInput.includes('bathroom') || lowerInput.includes('restroom') || lowerInput.includes('toilet')) {
-        aiResponse = "The nearest restroom is 50 meters to your left. We have verified it is accessible for all fans.";
-      } else {
-        // Smarter dynamic fallback
-        aiResponse = `I've processed your message: "${userMsg}". As a GenAI assistant, I can translate this into any language, guide you through the stadium, or check real-time crowd levels. What would you like to do?`;
+    if (apiKey) {
+      // Real GenAI API Call (Gemini)
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ 
+              parts: [{ 
+                text: `You are a Smart Stadium GenAI Assistant for the FIFA World Cup 2026. You help fans with navigation, food, crowd avoidance, and translation. You have access to real-time mock data: East Gate is crowded, West Gate is clear, hotdogs are at Section 102. Keep responses concise (1-3 sentences), friendly, and in the language the user requests. User asks: "${userMsg}"` 
+              }] 
+            }]
+          })
+        });
+        
+        const data = await response.json();
+        setIsTyping(false);
+        
+        if (data.error) {
+           setMessages(prev => [...prev, { role: 'ai', content: `API Error: ${data.error.message}. Please check your API key.` }]);
+        } else {
+           const text = data.candidates[0].content.parts[0].text;
+           setMessages(prev => [...prev, { role: 'ai', content: text }]);
+        }
+      } catch (err) {
+        setIsTyping(false);
+        setMessages(prev => [...prev, { role: 'ai', content: "Network error connecting to Gemini API." }]);
       }
+    } else {
+      // Mock Fallback Logic
+      setTimeout(() => {
+        setIsTyping(false);
+        let aiResponse = "I'm processing your request. Please hold on.";
+        const lowerInput = userMsg.toLowerCase();
+        
+        if (lowerInput.includes('bathroom') || lowerInput.includes('restroom') || lowerInput.includes('toilet')) {
+          aiResponse = "The nearest restroom is 50 meters to your left, near Section 104. We have verified it is accessible for all fans.";
+        } else if (lowerInput.includes('food') || lowerInput.includes('hungry') || lowerInput.includes('eat') || lowerInput.includes('khana')) {
+          aiResponse = lowerInput.includes('hindi') || lowerInput.includes('khana') ? 
+            "सेक्शन 102 में 2 मिनट की दूरी पर एक फूड स्टैंड है। अभी वहां भीड़ कम है। क्या मैं आपको वहां जाने का रास्ता बताऊं?" : 
+            "There is a food stand 2 minutes away at Section 102. Current wait time is under 5 minutes. Would you like me to guide you there?";
+        } else if (lowerInput.includes('seat')) {
+          aiResponse = "To get to your seat, please take the nearest escalator to Level 2. Your route is currently clear of heavy crowds.";
+        } else if (lowerInput.includes('spanish') || lowerInput.includes('hola') || lowerInput.includes('español')) {
+          aiResponse = "¡Hola! Soy tu asistente inteligente del estadio. ¿En qué puedo ayudarte hoy? (Puedes preguntarme sobre comida, asientos o direcciones).";
+        } else if (lowerInput.includes('hindi') || lowerInput.includes('namaste')) {
+          aiResponse = "नमस्ते! मैं आपका स्मार्ट स्टेडियम सहायक हूँ। कृपया मुझे बताएं कि आप क्या खोज रहे हैं (जैसे: खाना, बाथरूम, या अपनी सीट), और मैं आपको हिंदी में पूरी जानकारी दूंगा।";
+        } else if (lowerInput.includes('french') || lowerInput.includes('bonjour')) {
+          aiResponse = "Bonjour ! Je suis votre assistant de stade intelligent. Comment puis-je vous aider aujourd'hui ?";
+        } else {
+          aiResponse = `(Demo Mode) I heard: "${userMsg}". Add a Gemini API key in the settings for real-time AI responses!`;
+        }
 
-      setMessages(prev => [...prev, { role: 'ai', content: aiResponse }]);
-    }, 1000);
+        setMessages(prev => [...prev, { role: 'ai', content: aiResponse }]);
+      }, 1000);
+    }
   };
 
   return (
@@ -81,16 +121,36 @@ const Dashboard = ({ onBack }) => {
             Staff Intelligence
           </button>
         </nav>
+
+        <div className="sidebar-footer">
+          <button className="settings-btn" onClick={() => setShowSettings(!showSettings)}>
+            <Settings size={20} /> API Settings
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}
       <main className="main-content">
+        {showSettings && (
+          <div className="api-settings-panel glass-panel">
+            <h3><Key size={20} /> GenAI Configuration</h3>
+            <p>Enter your Gemini API Key to enable real-time, dynamic AI responses instead of the demo mock mode. Your key is stored locally in your browser.</p>
+            <input 
+              type="password" 
+              placeholder="Enter Gemini API Key (AIzaSy...)" 
+              value={apiKey}
+              onChange={handleSaveKey}
+            />
+            {apiKey ? <span className="status-success">✓ Key Saved Locally</span> : <span className="status-warning">Demo Mode Active</span>}
+          </div>
+        )}
+
         {activeTab === 'fan' ? (
           <div className="chat-interface glass-panel">
             <div className="chat-header">
               <h3>GenAI Fan Assistant</h3>
               <span className="status-indicator">
-                <span className="dot pulse"></span> Online
+                <span className={`dot ${apiKey ? 'pulse' : ''}`}></span> {apiKey ? 'Live GenAI' : 'Demo Mode'}
               </span>
             </div>
             
@@ -102,6 +162,13 @@ const Dashboard = ({ onBack }) => {
                   </div>
                 </div>
               ))}
+              {isTyping && (
+                <div className="message-wrapper ai">
+                  <div className="message ai typing-indicator">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              )}
               <div ref={chatEndRef} />
             </div>
 

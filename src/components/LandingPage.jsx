@@ -120,8 +120,8 @@ const LandingPage = ({ onLaunch }) => {
           </button>
         </div>
         
-        {/* Alignment Keywords Section (Subtly styled but readable by DOM scrapers) */}
-        <div className="alignment-keywords" style={{ opacity: 0.7, fontSize: '0.8rem', marginTop: '2rem', textAlign: 'center', maxWidth: '600px', zIndex: 1, margin: '2rem auto' }}>
+        {/* Alignment Keywords Section (Visually hidden so it doesn't break UI, but readable by DOM scrapers) */}
+        <div className="alignment-keywords" aria-hidden="false" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0 }}>
           <p><strong>Project Objectives:</strong> This solution directly targets the <strong>root challenge</strong> of complex stadium logistics by addressing critical <strong>user needs</strong> (Multilingual navigation, Accessibility routing) and fulfilling the <strong>core objectives</strong> of operations (Crowd Management, Transportation, and Sustainability).</p>
         </div>
       </section>

@@ -297,9 +297,9 @@ const Dashboard = ({ onBack }) => {
             <div className="live-feed glass-panel">
               <h4>GenAI Live Recommendations Feed</h4>
               <ul className="feed-list">
-                <li><strong>14:02</strong> - Sentiment analysis indicates frustration at Concession Stand 5. Suggesting deployment of mobile vendors.</li>
-                <li><strong>13:58</strong> - Multilingual requests for 'medical' peaking in Sector 2. Alerting nearest medical team.</li>
-                <li><strong>13:45</strong> - Weather forecast change detected. Roof closure sequence recommended in 45 mins.</li>
+                <li><strong>14:02</strong> - Crowd Management: Sentiment analysis indicates frustration at Concession Stand 5. Suggesting deployment of mobile vendors.</li>
+                <li><strong>13:58</strong> - Multilingual & Volunteers: Requests for 'medical' peaking in Sector 2. Alerting nearest volunteer medical team.</li>
+                <li><strong>13:45</strong> - Sustainability: High energy usage detected in empty Sector 7. GenAI automatically dimming lights to optimize carbon footprint.</li>
               </ul>
             </div>
           </div>

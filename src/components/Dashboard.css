@@ -432,6 +432,25 @@
   padding: 1.5rem;
 }
 
+.chart-panel {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  grid-column: 1 / -1;
+}
+
+.chart-panel h4 {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.chart-container {
+  width: 100%;
+  margin-top: 1rem;
+}
+
 .live-feed h4 {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Activity, Settings, Key } from 'lucide-react';
+import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Activity, Settings, Key, Menu, X } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('fan'); // 'fan' | 'staff'
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'ai', content: 'Hello! I am your Smart Stadium GenAI Assistant. I can help you with navigation, food, and translation in real-time.' }
   ]);
@@ -108,8 +109,21 @@ const Dashboard = ({ onBack }) => {
 
   return (
     <div className="dashboard-container">
+      {/* Mobile Header */}
+      <div className="mobile-header">
+        <h2>Command Center</h2>
+        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>
+      )}
+
       {/* Sidebar */}
-      <aside className="sidebar glass-panel">
+      <aside className={`sidebar glass-panel ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <button className="back-btn" onClick={onBack}>
             <ArrowLeft size={20} /> Back
@@ -120,14 +134,14 @@ const Dashboard = ({ onBack }) => {
         <nav className="sidebar-nav">
           <button 
             className={`nav-btn ${activeTab === 'fan' ? 'active' : ''}`}
-            onClick={() => setActiveTab('fan')}
+            onClick={() => { setActiveTab('fan'); setIsMobileMenuOpen(false); }}
           >
             <MessageSquare size={20} />
             Fan Assistant (GenAI)
           </button>
           <button 
             className={`nav-btn ${activeTab === 'staff' ? 'active' : ''}`}
-            onClick={() => setActiveTab('staff')}
+            onClick={() => { setActiveTab('staff'); setIsMobileMenuOpen(false); }}
           >
             <Activity size={20} />
             Staff Intelligence

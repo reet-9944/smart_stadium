@@ -223,7 +223,7 @@ const Dashboard = ({ onBack }) => {
           </div>
         )}
 
-        {activeTab === 'fan' ? (
+        {activeTab === 'fan' && (
           <div className="chat-interface glass-panel">
             <div className="chat-header">
               <h3>GenAI Fan Assistant</h3>

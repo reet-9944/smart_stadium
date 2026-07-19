@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import OperationsDashboard from './OperationsDashboard';
 
 // Mock Recharts to avoid rendering actual SVG charts in JSDOM tests

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, MessageSquare, Settings, Key, Accessibility, Users, Bus, Battery } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Settings, Accessibility, Users, Bus, Battery } from 'lucide-react';
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen, onBack, activeTab, setActiveTab, showSettings, setShowSettings }) => {
   return (

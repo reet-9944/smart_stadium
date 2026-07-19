@@ -108,7 +108,15 @@ const Dashboard = ({ onBack }) => {
   };
 
   return (
-    <div className="dashboard-container">
+    <div 
+      className="dashboard-container"
+      onMouseMove={(e) => {
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      }}
+    >
+      {/* Interactive Stadium Background */}
+      <div className="stadium-bg"></div>
       {/* Mobile Header */}
       <div className="mobile-header">
         <h2>Command Center</h2>

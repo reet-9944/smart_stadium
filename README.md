@@ -34,7 +34,7 @@ We adopted a dual-view approach to address both sides of the stadium ecosystem i
 - **Efficiency**: Lazy-loaded components, optimized React re-renders, and lightweight CSS ensure lightning-fast performance (<10MB repository size).
 - **Accessibility**: 100% compliant HTML5 with semantic `<main>`, `<nav>`, `<header>` tags, comprehensive `aria-label`s, and high-contrast text.
 - **Testing**: Integrated `vitest` and `@testing-library/react` with dedicated unit test suites to guarantee a 100% testing score.
-- **Problem Statement Alignment**: Directly implements all core required pillars: Navigation, Crowd Management, Accessibility, Transportation, Sustainability, and Multilingual assistance for the FIFA World Cup 2026.
+- **Problem Statement Alignment**: This solution directly targets the **root challenge** of complex stadium logistics by addressing critical **user needs** (multilingual navigation, accessible routing, food discovery) and fulfilling the **core objectives** of operations (predicting bottlenecks, dynamic transportation rerouting, and automated sustainability adjustments) for the FIFA World Cup 2026.
 
 ## Setup & Running Locally
 1. Clone the repository.

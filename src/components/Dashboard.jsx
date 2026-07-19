@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Activity, Settings, Key, Menu, X } from 'lucide-react';
+import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Activity, Settings, Key, Menu, X, Battery, Bus, Accessibility, Users } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = ({ onBack }) => {
@@ -156,20 +156,48 @@ const Dashboard = ({ onBack }) => {
         </div>
         
         <nav className="sidebar-nav">
-          <button 
-            className={`nav-btn ${activeTab === 'fan' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('fan'); setIsMobileMenuOpen(false); }}
-          >
-            <MessageSquare size={20} />
-            Fan Assistant (GenAI)
-          </button>
-          <button 
-            className={`nav-btn ${activeTab === 'staff' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('staff'); setIsMobileMenuOpen(false); }}
-          >
-            <Activity size={20} />
-            Staff Intelligence
-          </button>
+          <div className="sidebar-section">
+            <span className="sidebar-section-title">Fan Experience</span>
+            <button 
+              className={`nav-btn ${activeTab === 'fan' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('fan'); setIsMobileMenuOpen(false); }}
+            >
+              <MessageSquare size={20} />
+              GenAI Assistant
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'accessibility' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('accessibility'); setIsMobileMenuOpen(false); }}
+            >
+              <Accessibility size={20} />
+              Accessibility Services
+            </button>
+          </div>
+
+          <div className="sidebar-section">
+            <span className="sidebar-section-title">Operations</span>
+            <button 
+              className={`nav-btn ${activeTab === 'staff' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('staff'); setIsMobileMenuOpen(false); }}
+            >
+              <Users size={20} />
+              Crowd Intelligence
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'transport' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('transport'); setIsMobileMenuOpen(false); }}
+            >
+              <Bus size={20} />
+              Transport & Logistics
+            </button>
+            <button 
+              className={`nav-btn ${activeTab === 'sustainability' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('sustainability'); setIsMobileMenuOpen(false); }}
+            >
+              <Battery size={20} />
+              Sustainability Engine
+            </button>
+          </div>
         </nav>
 
         <div className="sidebar-footer">
@@ -234,14 +262,23 @@ const Dashboard = ({ onBack }) => {
               </button>
             </form>
           </div>
-        ) : (
+        )}
+        
+        {activeTab !== 'fan' && (
           <div className="staff-dashboard">
             <div className="dashboard-header">
-              <h3>Operational Intelligence</h3>
+              <h3>
+                {activeTab === 'staff' && 'Crowd Intelligence'}
+                {activeTab === 'transport' && 'Transport & Logistics'}
+                {activeTab === 'accessibility' && 'Accessibility Services'}
+                {activeTab === 'sustainability' && 'Sustainability Engine'}
+              </h3>
               <p>Real-time GenAI decision support</p>
             </div>
 
             <div className="metrics-grid">
+              {activeTab === 'staff' && (
+                <>
               <div className="metric-card glass-panel">
                 <div className="metric-header">
                   <AlertTriangle className="warning-icon" />
@@ -292,6 +329,44 @@ const Dashboard = ({ onBack }) => {
                    actionStates.log === 'loading' ? 'Fetching...' : 'Logs Exported ✓'}
                 </button>
               </div>
+                </>
+              )}
+
+              {activeTab === 'transport' && (
+                <div className="metric-card glass-panel">
+                  <div className="metric-header">
+                    <Bus className="info-icon" />
+                    <h4>Metro Line B Status</h4>
+                  </div>
+                  <div className="metric-value">Delayed - 15 mins</div>
+                  <p className="metric-insight">GenAI rerouting 4,000 exiting fans to South Parking shuttle buses to prevent dangerous platform overcrowding.</p>
+                  <button className={`action-btn ${actionStates.deploy === 'success' ? 'success' : ''}`} onClick={() => handleAction('deploy')}>{actionStates.deploy === 'idle' ? 'Update Digital Signage' : actionStates.deploy === 'loading' ? 'Updating...' : 'Signage Updated ✓'}</button>
+                </div>
+              )}
+
+              {activeTab === 'accessibility' && (
+                <div className="metric-card glass-panel">
+                   <div className="metric-header">
+                     <Accessibility className="success-icon" />
+                     <h4>ASL Interpreters</h4>
+                   </div>
+                   <div className="metric-value">5 Deployed</div>
+                   <p className="metric-insight">GenAI matched Spanish-speaking fan with hearing impairment to bilingual medical volunteer in Sector 2.</p>
+                   <button className={`action-btn ${actionStates.log === 'success' ? 'success' : ''}`} onClick={() => handleAction('log')}>{actionStates.log === 'idle' ? 'View Deployment Log' : actionStates.log === 'loading' ? 'Fetching...' : 'Log Opened ✓'}</button>
+                </div>
+              )}
+
+              {activeTab === 'sustainability' && (
+                <div className="metric-card glass-panel">
+                   <div className="metric-header">
+                     <Battery className="warning-icon" />
+                     <h4>Energy Optimization</h4>
+                   </div>
+                   <div className="metric-value">- 40 kW/h Saved</div>
+                   <p className="metric-insight">GenAI detected empty Sector 7. Automatically dimming lights and reducing HVAC power by 20% to optimize carbon footprint.</p>
+                   <button className={`action-btn ${actionStates.map === 'success' ? 'success' : ''}`} onClick={() => handleAction('map')}>{actionStates.map === 'idle' ? 'Approve Optimization' : actionStates.map === 'loading' ? 'Applying...' : 'Optimized ✓'}</button>
+                </div>
+              )}
             </div>
 
             <div className="live-feed glass-panel">

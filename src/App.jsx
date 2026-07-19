@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import LandingPage from './components/LandingPage';
-import Dashboard from './components/Dashboard';
+const Dashboard = React.lazy(() => import('./components/Dashboard'));
 
 function App() {
   const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'dashboard'
@@ -18,7 +18,9 @@ function App() {
       {currentView === 'landing' ? (
         <LandingPage onLaunch={() => setCurrentView('dashboard')} />
       ) : (
-        <Dashboard onBack={() => setCurrentView('landing')} />
+        <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#fff', backgroundColor: '#0B1120' }}>Loading Command Center...</div>}>
+          <Dashboard onBack={() => setCurrentView('landing')} />
+        </Suspense>
       )}
     </>
   );

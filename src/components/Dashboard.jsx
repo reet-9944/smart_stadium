@@ -34,7 +34,7 @@ const Dashboard = ({ onBack }) => {
     { role: 'ai', content: 'Hello! I am your Smart Stadium GenAI Assistant. I can help you with navigation, food, and translation in real-time.' }
   ]);
   const [inputValue, setInputValue] = useState('');
-  const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
+  const [apiKey, setApiKey] = useState(sessionStorage.getItem('gemini_api_key') || '');
   const [showSettings, setShowSettings] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [actionStates, setActionStates] = useState({
@@ -66,7 +66,7 @@ const Dashboard = ({ onBack }) => {
   const handleSaveKey = (e) => {
     const key = e.target.value;
     setApiKey(key);
-    localStorage.setItem('gemini_api_key', key);
+    sessionStorage.setItem('gemini_api_key', key);
   };
 
   const runDemoMode = (userMsg) => {
@@ -159,12 +159,12 @@ const Dashboard = ({ onBack }) => {
       {/* Interactive Stadium Background */}
       <div className="stadium-bg"></div>
       {/* Mobile Header */}
-      <div className="mobile-header">
+      <header className="mobile-header">
         <h2>Command Center</h2>
-        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <button aria-label="Toggle mobile menu" className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-      </div>
+      </header>
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
@@ -282,7 +282,7 @@ const Dashboard = ({ onBack }) => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
-              <button type="submit" className="send-btn">
+              <button aria-label="Send message" type="submit" className="send-btn">
                 <Send size={20} />
               </button>
             </form>
@@ -463,4 +463,4 @@ const Dashboard = ({ onBack }) => {
   );
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);

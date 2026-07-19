@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Activity, Settings, Key, Menu, X, Battery, Bus, Accessibility, Users } from 'lucide-react';
+import { ArrowLeft, Send, AlertTriangle, ShieldCheck, Map, MessageSquare, Settings, Key, Menu, X, Battery, Bus, Accessibility, Users } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const crowdData = [
@@ -133,7 +133,7 @@ const Dashboard = ({ onBack }) => {
             
             setIsTyping(false);
             setMessages(prev => [...prev, { role: 'ai', content: text }]);
-          } catch (proErr) {
+          } catch {
             throw new Error(flashErr.message); // Throw original error to trigger fallback
           }
         }

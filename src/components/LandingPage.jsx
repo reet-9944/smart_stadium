@@ -115,7 +115,7 @@ const LandingPage = ({ onLaunch }) => {
         <div className="cta-content glass-panel">
           <h2>Ready to experience the future?</h2>
           <p>Explore our GenAI prototype dashboard designed for fans and organizers.</p>
-          <button className="cta-button primary" onClick={onLaunch}>
+          <button className="launch-btn primary" onClick={onLaunch}>
             Enter Command Center <ArrowRight size={20} />
           </button>
         </div>

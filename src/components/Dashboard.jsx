@@ -12,7 +12,15 @@ const Dashboard = ({ onBack }) => {
   const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
   const [showSettings, setShowSettings] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const chatEndRef = useRef(null);
+
+  const triggerToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -233,7 +241,7 @@ const Dashboard = ({ onBack }) => {
                 </div>
                 <div className="metric-value">North Gate - Sector 4</div>
                 <p className="metric-insight">GenAI suggests opening overflow doors in 10 mins to prevent 30% congestion increase.</p>
-                <button className="action-btn">Deploy Staff</button>
+                <button className="action-btn" onClick={() => triggerToast('GenAI Action Executed: Staff successfully deployed to Sector 4.')}>Deploy Staff</button>
               </div>
 
               <div className="metric-card glass-panel">
@@ -243,7 +251,7 @@ const Dashboard = ({ onBack }) => {
                 </div>
                 <div className="metric-value">Metro Line B Delayed</div>
                 <p className="metric-insight">Auto-notifying fans leaving via West Gate to use alternative bus routes.</p>
-                <button className="action-btn">View Routing Map</button>
+                <button className="action-btn" onClick={() => triggerToast('GenAI Action Executed: Routing map dispatched to digital signs.')}>View Routing Map</button>
               </div>
 
               <div className="metric-card glass-panel">
@@ -253,7 +261,7 @@ const Dashboard = ({ onBack }) => {
                 </div>
                 <div className="metric-value">3 Active</div>
                 <p className="metric-insight">All requests currently assigned. Average resolution time: 4 mins.</p>
-                <button className="action-btn">View Log</button>
+                <button className="action-btn" onClick={() => triggerToast('GenAI Log Retrieved: Displaying active accessibility paths.')}>View Log</button>
               </div>
             </div>
 
@@ -265,6 +273,14 @@ const Dashboard = ({ onBack }) => {
                 <li><strong>13:45</strong> - Weather forecast change detected. Roof closure sequence recommended in 45 mins.</li>
               </ul>
             </div>
+          </div>
+        )}
+
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="toast-notification glass-panel">
+            <ShieldCheck size={20} className="success-icon" />
+            <span>{toastMessage}</span>
           </div>
         )}
       </main>
